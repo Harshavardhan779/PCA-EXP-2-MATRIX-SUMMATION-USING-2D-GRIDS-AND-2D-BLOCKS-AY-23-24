@@ -180,22 +180,21 @@ void checkResult(float *hostRef, float *gpuRef, const int N)
     else
         printf("Arrays do not match.\n\n");
 }
-
 // grid 2D block 2D
-__global__ void sumMatrixOnGPU2D(float *MatA, float *MatB, float *MatC, int nx,
-                                 int ny)
+__global__ void sumMatrixOnGPU2D(float *A, float *B, float *C, int NX, int NY)
 {
+    unsigned int ix = blockIdx.x * blockDim.x + threadIdx.x;
+    unsigned int iy = blockIdx.y * blockDim.y + threadIdx.y;
+    unsigned int idx = iy * NX + ix;
 
-
-
-
-//Write your code here
-
-
-
-
-
+    if (ix < NX && iy < NY)
+    {
+        C[idx] = A[idx] + B[idx];
+    }
 }
+
+
+
 
 int main(int argc, char **argv)
 {
@@ -286,11 +285,14 @@ int main(int argc, char **argv)
     CHECK(cudaDeviceReset());
 
     return (0);
+
 }
 ```
 
 ## OUTPUT:
-![OUTPUT](/PCA_2.png)
-
+### On Floating Point Data
+![OUTPUT](/On%20float.png)
+### On Int Data
+![OUTPUT](/PCA_2%20int.png)
 ## RESULT:
-The host took _________ seconds to complete it’s computation, while the GPU outperforms the host and completes the computation in ________ seconds. Therefore, float variables in the GPU will result in the best possible result. Thus, matrix summation using 2D grids and 2D blocks has been performed successfully.
+The host took 0.968486 seconds to complete it’s computation, while the GPU outperforms the host and completes the computation in 0.014967 seconds. Therefore, float variables in the GPU will result in the best possible result. Thus, matrix summation using 2D grids and 2D blocks has been performed successfully.
